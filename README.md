@@ -1,4 +1,4 @@
-# Flechette
+# Flechette - work in progress
 
 Flechette is a Java project aimed at simplifying tests in a server-client architecture.
 Flechette allows the creation of a server application and a client application with
@@ -8,13 +8,15 @@ Both server and client can be scaled horizontally.
 
 An overview of different performance factors can be seen in the following image.
 ![Performance factors in client-server systems](client-server-performance-factors.png)
+These factors are not completely comprehensive and include a bit of overlap, but do describe
+the hypothesized causes of bad performance that was inspiration for writing Fletchette.
 
 [STUPS Senza](http://stups.readthedocs.org/en/latest/components/senza.html) templates
 are provided for deployment on AWS.
 
 ## Server
 
-The server is a simple Spring Boot application. Fletchette provides a NOP service that just
+The server is a Spring Boot application. Fletchette provides a NOP service that just
 returns a string response. More complex operations such as database reads or writes
 or expensive calculations can also be implemented in order to run stress tests on them.
 
