@@ -7,10 +7,6 @@ endpoint.
 Both server and client can be scaled horizontally.
 
 An overview of different performance factors can be seen in the following image.
-![Performance factors in client-server systems](https://raw.github.com/vosmann/flechette/master/client-server-performance-factors.png)
-Rel
-![Performance factors in client-server systems](vosmann/flechette/master/client-server-performance-factors.png)
-Rel min
 ![Performance factors in client-server systems](client-server-performance-factors.png)
 
 [STUPS Senza](http://stups.readthedocs.org/en/latest/components/senza.html) templates
@@ -57,11 +53,11 @@ It allows specifying:
     docker build -t docker.com/fletchette-client:1.0 .
     docker push docker.com/fletchette-client:1.0
 
-### Running the server locally
+### Running the client locally
 
     java -jar target/flechette-server-1.0-SNAPSHOT.jar
 
-### Running the server on AWS
+### Running the client on AWS
 
     senza create client.yaml PARAM1
 
