@@ -1,52 +1,53 @@
 package com.vosmann.flechette;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@org.springframework.stereotype.Controller
-@EnableAutoConfiguration
+import java.util.Map;
+
+@RestController
 public class Controller {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
+
+    @Autowired
+    private StringService service;
+    @Autowired
+    private MetricRegistry registry;
+    @Autowired
+    private SystemMetricsService systemMetricsService;
 
     @RequestMapping("/")
     @ResponseBody
     String root() {
-        return "NOP service is running.";
+
+        final Timer timer = registry.timer(MetricRegistry.name(Controller.class, "root"));
+        final Timer.Context context = timer.time();
+        try {
+            return service.get();
+        } finally {
+            context.stop();
+        }
     }
 
     @RequestMapping("/metrics")
     @ResponseBody
-    Metrics metrics() {
-        return new Metrics();
+    Map<String, Metric> metrics() {
+        return registry.getMetrics();
     }
 
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(Controller.class, args);
-    }
+    @RequestMapping("/system-metrics")
+    @ResponseBody
+    SystemMetrics systemMetrics() {
+        return systemMetricsService.get();
 
-
-    public static class Metrics {
-        private String system;
-        private String app;
     }
-// TODO Measure:
-// https://support.hyperic.com/display/SIGAR/Home
-/*
-{
-    "system": {
-        "cpu": 0.1,
-        "memory/heap": 0.1,
-        "uptime": 20,
-        "tcpConnections": 23,
-        "udpConnections": 23
-    },
-    "app": {
-        "requestRate": 500,
-        "requestCount": 1234,
-        "responseTime": 0.1
-    }
-}
-*/
 
 }
