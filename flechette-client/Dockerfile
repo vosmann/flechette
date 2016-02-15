@@ -1,8 +1,0 @@
-FROM
-MAINTAINER vosmann@gmail.com
-
-EXPOSE 12300
-
-COPY
-
-ENTRYPOINT
