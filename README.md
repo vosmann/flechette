@@ -8,6 +8,7 @@ Both server and client can be scaled horizontally.
 
 An overview of different performance factors can be seen in the following image.
 ![Performance factors in client-server systems](client-server-performance-factors.png)
+
 These factors are not completely comprehensive and include a bit of overlap, but do describe
 the hypothesized causes of bad performance that was inspiration for writing Fletchette.
 
