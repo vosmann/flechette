@@ -44,7 +44,7 @@ class WorkerAdder implements Runnable{
     }
 
     private long getRandomWorkerDelay() {
-        return Math.abs(RANDOM.nextInt()) % executionPeriod;
+        return Math.abs(RANDOM.nextInt()) % executionPeriod; // Fix dependence on time unit. Use millis.
     }
 
     @Override

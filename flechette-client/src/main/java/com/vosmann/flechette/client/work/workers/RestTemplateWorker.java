@@ -37,4 +37,9 @@ public class RestTemplateWorker implements Runnable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "RestTemplateWorker{" + "url='" + url + '\'' + '}';
+    }
+
 }

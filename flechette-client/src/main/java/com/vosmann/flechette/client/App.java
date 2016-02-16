@@ -48,16 +48,18 @@ public class App {
         final List<Launcher> launchers = new LinkedList<>();
 
         for (final Runnable worker : workers) {
-            LOG.info("Creating a launcher for worker: {}", worker);
 
-            launchers.add(new Launcher.Builder()
+            final Launcher launcher = new Launcher.Builder()
                     .threadCount(threadCount)
                     .rampUpTime(rampUpTime)
                     .rampUpTimeUnit(rampUpTimeUnit)
                     .executionPeriod(executionPeriod)
                     .executionPeriodTimeUnit(executionPeriodTimeUnit)
                     .worker(worker)
-                    .build());
+                    .build();
+
+            LOG.info("Created a launcher: {}", launcher);
+            launchers.add(launcher);
         }
 
         return launchers;
