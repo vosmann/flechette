@@ -1,9 +1,9 @@
-# Flechette - work in progress
+# Flechette
 
 Flechette is a Java project aimed at simplifying tests in a server-client architecture.
 Flechette allows the creation of a server application and a client application with
-built-in performance measurement. The metrics can be retrieved as JSON from the `/metrics`
-endpoint.
+built-in performance measurement. The metrics can be retrieved as JSON from the `/metrics` and `system-metrics`
+endpoints.
 Both server and client can be scaled horizontally.
 
 An overview of different performance factors can be seen in the following image.
@@ -16,7 +16,7 @@ the hypothesized causes of bad performance that was inspiration for writing Flet
 are provided for deployment on AWS.
 
 ## Metrics
-The metrics provided through the `/metrics` include:
+The metrics provided through the `/metrics` or `system-metrics` include:
 
 * request rate,
 * response rate,
