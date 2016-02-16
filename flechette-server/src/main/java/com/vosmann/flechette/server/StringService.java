@@ -1,4 +1,4 @@
-package com.vosmann.flechette;
+package com.vosmann.flechette.server;
 
 public interface StringService {
 

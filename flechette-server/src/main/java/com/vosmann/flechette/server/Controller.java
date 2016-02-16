@@ -1,4 +1,4 @@
-package com.vosmann.flechette;
+package com.vosmann.flechette.server;
 
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;

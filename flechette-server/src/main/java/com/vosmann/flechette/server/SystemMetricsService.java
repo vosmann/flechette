@@ -1,4 +1,4 @@
-package com.vosmann.flechette;
+package com.vosmann.flechette.server;
 
 import org.hyperic.sigar.NetConnection;
 import org.hyperic.sigar.NetFlags;
