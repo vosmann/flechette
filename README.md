@@ -25,9 +25,10 @@ The metrics provided through the `/metrics` or `system-metrics` include:
 * TCP connections info.
 
 ## Server
-The server is a Spring Boot application. Fletchette provides a default NOP service that just
-returns a string response. More complex operations such as database reads or writes
-or expensive calculations can also be implemented in order to run stress tests on them.
+The server is a Spring Boot application. By default, Fletchette provides a default NOP service that just
+returns a string response on the root path `/`. Additional implementations for this interface can be provided.
+For example, more complex operations such as database reads or writes or expensive calculations we want run stress tests
+on.
 
 The embedded server, Tomcat by default, should be configured for every test.
 
