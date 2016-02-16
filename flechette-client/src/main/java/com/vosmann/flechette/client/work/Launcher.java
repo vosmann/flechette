@@ -89,12 +89,12 @@ public class Launcher {
         private static final Random RANDOM = new Random();
 
         private final ScheduledExecutorService workerService;
-        private final Worker worker;
+        private final Runnable worker;
         private final AtomicInteger workerCount;
         private final long executionPeriod;
         private final TimeUnit executionPeriodTimeUnit;
 
-        public WorkerAdder(final ScheduledExecutorService workerService, final Worker worker, final int workerCount,
+        public WorkerAdder(final ScheduledExecutorService workerService, final Runnable worker, final int workerCount,
                            final long executionPeriod, final TimeUnit executionPeriodTimeUnit) {
             this.workerService = workerService;
             this.worker = worker;
@@ -135,7 +135,7 @@ public class Launcher {
         private TimeUnit rampUpTimeUnit;
         private long executionPeriod;
         private TimeUnit executionPeriodTimeUnit;
-        private Worker worker;
+        private Runnable worker;
 
         public Builder threadCount(int val) {
             threadCount = val;
@@ -162,7 +162,7 @@ public class Launcher {
             return this;
         }
 
-        public Builder worker(Worker val) {
+        public Builder worker(Runnable val) {
             worker = val;
             return this;
         }
