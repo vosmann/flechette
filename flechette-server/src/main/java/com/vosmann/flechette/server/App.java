@@ -5,6 +5,8 @@ import com.codahale.metrics.json.MetricsModule;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -15,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 public class App {
+
+    private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     @Bean
     public StringService stringService() {
@@ -55,8 +59,11 @@ public class App {
     }
 
     private static void addSigarNativeLib() {
-        final String javaLibraryPath = System.getProperty("java.library.path");
-        System.setProperty("java.library.path", "lib:" + javaLibraryPath); // Relative path for Sigar lib.
+
+        final String javaLibraryPath = "lib:" + System.getProperty("java.library.path");
+        System.setProperty("java.library.path", javaLibraryPath); // Relative path for Sigar lib.
+
+        LOG.info("Updated with path to Sigar native binaries: java.library.path={}", javaLibraryPath);
     }
 
 }

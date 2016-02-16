@@ -81,6 +81,13 @@ public class Launcher {
         return workerAddingPeriodInMs;
     }
 
+    @Override
+    public String toString() {
+        return "Launcher{" + "threadCount=" + threadCount + ", rampUpTime=" + rampUpTime + "," +
+                "rampUpTimeUnit=" + rampUpTimeUnit + ", workerAdder=" + workerAdder + "," +
+                "workerAddingPeriodInMs=" + workerAddingPeriodInMs + ", startDelayInMs=" + startDelayInMs + '}';
+    }
+
     public static final class Builder {
         private int threadCount;
         private long rampUpTime;

@@ -27,6 +27,7 @@ public class Controller {
     @RequestMapping("/")
     @ResponseBody
     String root() {
+        LOG.debug("Received request at /.");
 
         final Timer timer = registry.timer(MetricRegistry.name(Controller.class, "root"));
         final Timer.Context context = timer.time();

@@ -17,15 +17,15 @@ class WorkerAdder implements Runnable{
     private final Runnable worker;
     private final AtomicInteger workerCount;
     private final long executionPeriod;
-    private final TimeUnit executionPeriodTimeUnit;
+    private final TimeUnit timeUnit;
 
     WorkerAdder(final ScheduledExecutorService workerService, final Runnable worker, final int workerCount,
-                       final long executionPeriod, final TimeUnit executionPeriodTimeUnit) {
+                final long executionPeriod, final TimeUnit timeUnit) {
         this.workerService = workerService;
         this.worker = worker;
         this.workerCount = new AtomicInteger(workerCount);
         this.executionPeriod = executionPeriod;
-        this.executionPeriodTimeUnit = executionPeriodTimeUnit;
+        this.timeUnit = timeUnit;
     }
 
     @Override
@@ -36,21 +36,21 @@ class WorkerAdder implements Runnable{
         }
 
         final long workerDelay = getRandomWorkerDelay(); // To avoid having a synchronized salvo of worker runs.
-        LOG.info("Scheduling a worker to run every {} {}. Start delay will be {}.",
-                executionPeriod, executionPeriodTimeUnit.toString(), workerDelay);
+        LOG.info("Starting a worker that will run every {} {}. Start delay will be {} {}.",
+                executionPeriod, timeUnit, workerDelay, timeUnit);
 
-        workerService.scheduleAtFixedRate(worker, workerDelay, executionPeriod, executionPeriodTimeUnit);
+        workerService.scheduleAtFixedRate(worker, workerDelay, executionPeriod, timeUnit);
         workerCount.decrementAndGet();
     }
 
     private long getRandomWorkerDelay() {
-        return RANDOM.nextInt() % executionPeriod;
+        return Math.abs(RANDOM.nextInt()) % executionPeriod;
     }
 
     @Override
     public String toString() {
         return "WorkerAdder{" + "worker=" + worker +
-                "executionPeriod=" + executionPeriod + ", executionPeriodTimeUnit=" + executionPeriodTimeUnit + '}';
+                "executionPeriod=" + executionPeriod + ", timeUnit=" + timeUnit + '}';
     }
 
 }
