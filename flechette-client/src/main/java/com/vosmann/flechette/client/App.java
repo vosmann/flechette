@@ -7,6 +7,8 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 
 import java.util.concurrent.TimeUnit;
@@ -33,6 +35,13 @@ public class App {
     @Bean
     public SystemMetricsService systemMetricsService() {
         return new SystemMetricsService();
+    }
+
+    @Bean
+    public EmbeddedServletContainerFactory servletContainer() {
+        final TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
+        factory.setPort(22000);
+        return factory;
     }
 
     public static void main(final String[] args) throws Exception {
