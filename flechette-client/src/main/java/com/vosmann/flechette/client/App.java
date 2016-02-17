@@ -89,7 +89,7 @@ public class App {
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
-        factory.setPort(22000);
+        factory.setPort(11000);
         return factory;
     }
 

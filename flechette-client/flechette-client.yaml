@@ -2,8 +2,21 @@
 SenzaInfo:
   StackName: flechette-client
   Parameters:
+    - Url:
+        Description: ""
+    - ThreadCount:
+        Description: "How many threads should every worker be executed in."
+    - RampUpTime:
+        Description: ""
+    - RampUpTimeUnit:
+        Description: ""
+    - ExecutionPeriod:
+        Description: ""
+    - ExecutionPeriodTimeUnit:
+        Description: ""
     - ImageVersion:
         Description: "Docker image version of flechette-client."
+        Default: "1.0-SNAPSHOT"
 
 SenzaComponents:
 
@@ -20,16 +33,28 @@ SenzaComponents:
       ElasticLoadBalancer: AppLoadBalancer
       AssociatePublicIpAddress: false # change for standalone deployment in default VPC
       TaupageConfig:
+        application_id: flechette-client
         application_version: "{{Arguments.ImageVersion}}"
         runtime: Docker
-        source: "reco/flechette-client:{{Arguments.ImageVersion}}"
+        source: "vosmann/flechette-client:{{Arguments.ImageVersion}}"
         health_check_path: /
         ports:
-          22000: 22000
+          11000: 11000
+        environment:
+          URL="{{Arguments.Url}}"
+          THREAD_COUNT="{{Arguments.ThreadCount}}"
+          RAMPUP_TIME="{{Arguments.RampUpTime}}"
+          RAMPUP_TIMEUNIT="{{Arguments.RampUpTimeUnit}}"
+          EXECUTION_PERIOD="{{Arguments.ExecutionPeriod}}"
+          EXECUTION_PERIOD_TIMEUNIT="{{Arguments.ExecutionPeriodTimeUnit}}"
+      AutoScaling:
+        Minimum: 1
+        Maximum: 1
+        MetricType: CPU
 
   - AppLoadBalancer:
       Type: Senza::WeightedDnsElasticLoadBalancer
-      HTTPPort: 22000
+      HTTPPort: 11000
       HealthCheckPath: /
       SecurityGroups:
         - app-flechette-client-lb
