@@ -25,7 +25,7 @@ SenzaComponents:
         application_version: "{{Arguments.ImageVersion}}"
         runtime: Docker
         source: "vosmann/flechette-server:{{Arguments.ImageVersion}}"
-        health_check_path: /
+        health_check_path: /health
         ports:
           11000: 11000
 

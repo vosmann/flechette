@@ -37,16 +37,16 @@ SenzaComponents:
         application_version: "{{Arguments.ImageVersion}}"
         runtime: Docker
         source: "vosmann/flechette-client:{{Arguments.ImageVersion}}"
-        health_check_path: /
+        health_check_path: /health
         ports:
           11000: 11000
         environment:
-          URL="{{Arguments.Url}}"
-          THREAD_COUNT="{{Arguments.ThreadCount}}"
-          RAMPUP_TIME="{{Arguments.RampUpTime}}"
-          RAMPUP_TIMEUNIT="{{Arguments.RampUpTimeUnit}}"
-          EXECUTION_PERIOD="{{Arguments.ExecutionPeriod}}"
-          EXECUTION_PERIOD_TIMEUNIT="{{Arguments.ExecutionPeriodTimeUnit}}"
+          URL: "{{Arguments.Url}}"
+          THREAD_COUNT: "{{Arguments.ThreadCount}}"
+          RAMPUP_TIME: "{{Arguments.RampUpTime}}"
+          RAMPUP_TIMEUNIT: "{{Arguments.RampUpTimeUnit}}"
+          EXECUTION_PERIOD: "{{Arguments.ExecutionPeriod}}"
+          EXECUTION_PERIOD_TIMEUNIT: "{{Arguments.ExecutionPeriodTimeUnit}}"
       AutoScaling:
         Minimum: 1
         Maximum: 1
