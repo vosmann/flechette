@@ -4,11 +4,12 @@ SenzaInfo:
   Parameters:
     - ImageVersion:
         Description: "Docker image version of flechette-server."
+        Default: 1.0-SNAPSHOT
 
 SenzaComponents:
 
   - Configuration:
-      Type: Senza::StupsAutoConfiguration # auto-detect network setup
+      Type: Senza::StupsAutoConfiguration
 
   - AppServer:
       Type: Senza::TaupageAutoScalingGroup
@@ -18,11 +19,12 @@ SenzaComponents:
       IamRoles:
         - app-flechette-server
       ElasticLoadBalancer: AppLoadBalancer
-      AssociatePublicIpAddress: false # change for standalone deployment in default VPC
+      AssociatePublicIpAddress: false
       TaupageConfig:
+        application_id: flechette-server
         application_version: "{{Arguments.ImageVersion}}"
         runtime: Docker
-        source: "reco/flechette-server:{{Arguments.ImageVersion}}"
+        source: "vosmann/flechette-server:{{Arguments.ImageVersion}}"
         health_check_path: /
         ports:
           11000: 11000
