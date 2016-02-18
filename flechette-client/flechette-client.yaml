@@ -2,18 +2,20 @@
 SenzaInfo:
   StackName: flechette-client
   Parameters:
+    - WorkerName:
+        Description: "What kind of worker should do the calls. Comma-delimited if many."
     - Url:
-        Description: ""
+        Description: "The server endpoint this client will call."
     - ThreadCount:
         Description: "How many threads should every worker be executed in."
     - RampUpTime:
-        Description: ""
+        Description: "Amount of time units to go from 0 threads to ThreadCount."
     - RampUpTimeUnit:
-        Description: ""
+        Description: "E.g. MINUTES"
     - ExecutionPeriod:
-        Description: ""
+        Description: "A thread will make a call every ExecutionPeriod timeunits."
     - ExecutionPeriodTimeUnit:
-        Description: ""
+        Description: "E.g. MILLISECONDS"
     - ImageVersion:
         Description: "Docker image version of flechette-client."
         Default: "1.0-CLIENT-SNAPSHOT"
@@ -25,7 +27,7 @@ SenzaComponents:
 
   - AppServer:
       Type: Senza::TaupageAutoScalingGroup
-      InstanceType: m4.xlarge
+      InstanceType: m4.2xlarge
       SecurityGroups:
         - app-flechette-client
       IamRoles:
@@ -41,6 +43,7 @@ SenzaComponents:
         ports:
           22000: 22000
         environment:
+          ALLOWED_WORKERS: "{{Arguments.WorkerName}}"
           URL: "{{Arguments.Url}}"
           THREAD_COUNT: "{{Arguments.ThreadCount}}"
           RAMPUP_TIME: "{{Arguments.RampUpTime}}"
@@ -54,8 +57,8 @@ SenzaComponents:
 
   - AppLoadBalancer:
       Type: Senza::WeightedDnsElasticLoadBalancer
-      HTTPPort: 11000
-      HealthCheckPath: /
+      HTTPPort: 22000
+      HealthCheckPath: /health
       SecurityGroups:
         - app-flechette-client-lb
       Scheme: internal

@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vosmann.flechette.client.work.Launcher;
+import com.vosmann.flechette.client.work.workers.Worker;
 import com.vosmann.flechette.client.work.workers.ning.NingSyncClientWorker;
 import com.vosmann.flechette.client.work.workers.RestTemplateWorker;
 import com.vosmann.flechette.client.work.workers.ning.pool.PoolConfig;
@@ -18,18 +19,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class App {
 
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
 
+    // Wait until a connection is established.
+    // Not to be confused with waiting for a connection from a connection manager, what can be fast if reused connection.
+    public static final int CONNECT_TIMEOUT_IN_MS = 1000;
     public static final int REQUEST_TIMEOUT_IN_MS = 100;
-    public static final int CONNECT_TIMEOUT_IN_MS = 1000; // Wait until a connection is established.
-    public static final int CONNECTION_REQUEST_TIMEOUT_IN_MS = 1000; // Wait for a connection from a connection manager. This can be very fast if the connection is being reused.
 
     @Value("${url}")
     private String url;
@@ -43,41 +46,48 @@ public class App {
     private long executionPeriod;
     @Value("${execution.period.timeunit}")
     private TimeUnit executionPeriodTimeUnit;
+    @Value("#{'${allowed.workers}'.split(',')}")
+    private Set<String> allowedWorkers;
 
     @Bean
-    public Runnable ningSyncClientOldtWorker(final MetricRegistry registry) {
+    public Worker ningSyncClientOldtWorker(final MetricRegistry registry) {
         final PoolConfig poolConfig = PoolConfig.oldConfig();
         return new NingSyncClientWorker(url, registry, poolConfig, "old");
     }
 
     @Bean
-    public Runnable ningSyncClientDefaultWorker(final MetricRegistry registry) {
+    public Worker ningSyncClientDefaultWorker(final MetricRegistry registry) {
         final PoolConfig poolConfig = PoolConfig.defaultConfig();
         return new NingSyncClientWorker(url, registry, poolConfig, "default");
     }
 
     @Bean
-    public Runnable ningSyncClientLongWorker(final MetricRegistry registry) {
+    public Worker ningSyncClientLongWorker(final MetricRegistry registry) {
         final int tenSeconds = 10000;
         final PoolConfig poolConfig = new PoolConfig.Builder().maxConnectionLifeTime(tenSeconds).build();
         return new NingSyncClientWorker(url, registry, poolConfig, "long");
     }
 
     @Bean
-    public Runnable ningSyncClientIdleWorker(final MetricRegistry registry) {
+    public Worker ningSyncClientIdleWorker(final MetricRegistry registry) {
         final int tenSeconds = 10000;
         final PoolConfig poolConfig = new PoolConfig.Builder().maxIdleTime(tenSeconds).build();
         return new NingSyncClientWorker(url, registry, poolConfig, "idle");
     }
 
     @Bean
-    public Runnable ningSyncClientLongIdleWorker(final MetricRegistry registry) {
+    public Worker ningSyncClientLongIdleWorker(final MetricRegistry registry) {
         final int tenSeconds = 10000;
         final PoolConfig poolConfig = new PoolConfig.Builder()
                 .maxConnectionLifeTime(tenSeconds)
                 .maxIdleTime(tenSeconds)
                 .build();
-        return new NingSyncClientWorker(url, registry, poolConfig, "longidle");
+        return new NingSyncClientWorker(url, registry, poolConfig, "longIdle");
+    }
+
+    @Bean
+    public Worker restTemplateWorker(final MetricRegistry registry, final ClientHttpRequestFactory requestFactory) {
+        return new RestTemplateWorker(url, registry, "restTemplateDefault", requestFactory);
     }
 
     @Bean
@@ -89,29 +99,23 @@ public class App {
     }
 
     @Bean
-    public Runnable restTemplateWorker(final MetricRegistry registry, final ClientHttpRequestFactory requestFactory) {
-        return new RestTemplateWorker(url, registry, requestFactory);
-    }
+    public List<Launcher> launchers(final List<Worker> workers) {
 
-    @Bean
-    public List<Launcher> launchers(final List<Runnable> workers) {
-        final List<Launcher> launchers = new LinkedList<>();
+        LOG.info("Allowed workers: {}", allowedWorkers);
 
-        for (final Runnable worker : workers) {
+        final List<Launcher> launchers = workers.stream()
+                .filter(worker -> allowedWorkers.contains(worker.getName()))
+                .map(worker -> new Launcher.Builder()
+                            .threadCount(threadCount)
+                            .rampUpTime(rampUpTime)
+                            .rampUpTimeUnit(rampUpTimeUnit)
+                            .executionPeriod(executionPeriod)
+                            .executionPeriodTimeUnit(executionPeriodTimeUnit)
+                            .worker(worker)
+                            .build())
+                .collect(Collectors.toList());
 
-            final Launcher launcher = new Launcher.Builder()
-                    .threadCount(threadCount)
-                    .rampUpTime(rampUpTime)
-                    .rampUpTimeUnit(rampUpTimeUnit)
-                    .executionPeriod(executionPeriod)
-                    .executionPeriodTimeUnit(executionPeriodTimeUnit)
-                    .worker(worker)
-                    .build();
-
-            LOG.info("Created a launcher: {}", launcher);
-            launchers.add(launcher);
-        }
-
+        launchers.forEach(launcher -> LOG.info("Created a launcher: {}", launcher));
         return launchers;
     }
 

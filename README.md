@@ -79,12 +79,14 @@ It allows specifying:
 
     java -jar target/flechette-client-1.0-SNAPSHOT.jar # Uses application.properties defaults.
     docker run -u 998 -p 11000:11000 \
+               -e ALLOWED_WORKERS=restTemplateDefault \
                -e URL=http://192.168.99.100:11000/ \
                -e THREAD_COUNT=50 \
                -e RAMPUP_TIME=5 -e RAMPUP_TIMEUNIT=MINUTES \
                -e EXECUTION_PERIOD=2000 -e EXECUTION_PERIOD_TIMEUNIT=MILLISECONDS \
                vosmann/flechette-client:1.0-SNAPSHOT
     senza create flechette-client.yaml CLIENT1 \
+                                      WorkerName=restTemplateDefault \
                                       Url=http://localhost:11000 \
                                       ThreadCount=100 \
                                       RampUpTime=5 RampUpTimeUnit=MINUTES \

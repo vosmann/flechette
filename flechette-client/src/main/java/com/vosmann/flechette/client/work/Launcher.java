@@ -1,5 +1,6 @@
 package com.vosmann.flechette.client.work;
 
+import com.vosmann.flechette.client.work.workers.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +95,7 @@ public class Launcher {
         private TimeUnit rampUpTimeUnit;
         private long executionPeriod;
         private TimeUnit executionPeriodTimeUnit;
-        private Runnable worker;
+        private Worker worker;
 
         public Builder threadCount(int val) {
             threadCount = val;
@@ -121,7 +122,7 @@ public class Launcher {
             return this;
         }
 
-        public Builder worker(Runnable val) {
+        public Builder worker(Worker val) {
             worker = val;
             return this;
         }
