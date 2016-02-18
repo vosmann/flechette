@@ -4,7 +4,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vosmann.flechette.client.work.Launcher;
+import com.vosmann.flechette.client.work.workers.ning.NingSyncClientWorker;
 import com.vosmann.flechette.client.work.workers.RestTemplateWorker;
+import com.vosmann.flechette.client.work.workers.ning.pool.PoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +26,10 @@ import java.util.concurrent.TimeUnit;
 public class App {
 
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
+    public static final int REQUEST_TIMEOUT_IN_MS = 100;
+    public static final int CONNECT_TIMEOUT_IN_MS = 1000; // Wait until a connection is established.
+    public static final int CONNECTION_REQUEST_TIMEOUT_IN_MS = 1000; // Wait for a connection from a connection manager. This can be very fast if the connection is being reused.
 
     @Value("${url}")
     private String url;
@@ -37,8 +45,52 @@ public class App {
     private TimeUnit executionPeriodTimeUnit;
 
     @Bean
-    public Runnable restTemplateWorker(final MetricRegistry registry) {
-        return new RestTemplateWorker(url, registry);
+    public Runnable ningSyncClientOldtWorker(final MetricRegistry registry) {
+        final PoolConfig poolConfig = PoolConfig.oldConfig();
+        return new NingSyncClientWorker(url, registry, poolConfig, "old");
+    }
+
+    @Bean
+    public Runnable ningSyncClientDefaultWorker(final MetricRegistry registry) {
+        final PoolConfig poolConfig = PoolConfig.defaultConfig();
+        return new NingSyncClientWorker(url, registry, poolConfig, "default");
+    }
+
+    @Bean
+    public Runnable ningSyncClientLongWorker(final MetricRegistry registry) {
+        final int tenSeconds = 10000;
+        final PoolConfig poolConfig = new PoolConfig.Builder().maxConnectionLifeTime(tenSeconds).build();
+        return new NingSyncClientWorker(url, registry, poolConfig, "long");
+    }
+
+    @Bean
+    public Runnable ningSyncClientIdleWorker(final MetricRegistry registry) {
+        final int tenSeconds = 10000;
+        final PoolConfig poolConfig = new PoolConfig.Builder().maxIdleTime(tenSeconds).build();
+        return new NingSyncClientWorker(url, registry, poolConfig, "idle");
+    }
+
+    @Bean
+    public Runnable ningSyncClientLongIdleWorker(final MetricRegistry registry) {
+        final int tenSeconds = 10000;
+        final PoolConfig poolConfig = new PoolConfig.Builder()
+                .maxConnectionLifeTime(tenSeconds)
+                .maxIdleTime(tenSeconds)
+                .build();
+        return new NingSyncClientWorker(url, registry, poolConfig, "longidle");
+    }
+
+    @Bean
+    public ClientHttpRequestFactory clientHttpRequestFactory() {
+        final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setReadTimeout(REQUEST_TIMEOUT_IN_MS);
+        factory.setConnectTimeout(CONNECT_TIMEOUT_IN_MS);
+        return factory;
+    }
+
+    @Bean
+    public Runnable restTemplateWorker(final MetricRegistry registry, final ClientHttpRequestFactory requestFactory) {
+        return new RestTemplateWorker(url, registry, requestFactory);
     }
 
     @Bean

@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,8 +16,9 @@ public class RestTemplateWorker implements Runnable {
     private final String url;
     private final MetricRegistry registry;
 
-    public RestTemplateWorker(final String url, final MetricRegistry registry) {
-        this.restTemplate = new RestTemplate();
+    public RestTemplateWorker(final String url, final MetricRegistry registry,
+                              final ClientHttpRequestFactory requestFactory) {
+        this.restTemplate = new RestTemplate(requestFactory);
         this.url = url;
         this.registry = registry;
     }
