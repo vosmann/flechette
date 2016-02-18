@@ -4,7 +4,7 @@ WORKDIR /opt/flechette
 
 EXPOSE 11000
 
-ENV VERSION 1.0-SNAPSHOT
+ENV VERSION 1.0-SERVER-SNAPSHOT
 
 ADD lib lib
 ADD target/flechette-server-$VERSION.jar flechette-server.jar

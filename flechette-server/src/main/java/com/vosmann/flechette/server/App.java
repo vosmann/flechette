@@ -2,8 +2,6 @@ package com.vosmann.flechette.server;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
-import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
-import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +26,7 @@ public class App {
     @Bean
     public MetricRegistry metricRegistry() {
         final MetricRegistry registry = new MetricRegistry();
-        registry.registerAll(new MemoryUsageGaugeSet());
-        registry.registerAll(new ThreadStatesGaugeSet());
+        // registry.registerAll(new MemoryUsageGaugeSet());
         // registry.registerAll(new BufferPoolMetricSet());
         return registry;
     }

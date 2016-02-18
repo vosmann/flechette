@@ -2,8 +2,6 @@ package com.vosmann.flechette.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
-import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
-import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vosmann.flechette.client.work.Launcher;
 import com.vosmann.flechette.client.work.workers.RestTemplateWorker;
@@ -68,8 +66,7 @@ public class App {
     @Bean
     public MetricRegistry metricRegistry() {
         final MetricRegistry registry = new MetricRegistry();
-        registry.registerAll(new MemoryUsageGaugeSet());
-        registry.registerAll(new ThreadStatesGaugeSet());
+        // registry.registerAll(new MemoryUsageGaugeSet());
         // registry.registerAll(new BufferPoolMetricSet());
         return registry;
     }
@@ -89,7 +86,7 @@ public class App {
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
-        factory.setPort(11000);
+        factory.setPort(22000);
         return factory;
     }
 

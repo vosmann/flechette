@@ -1,12 +1,12 @@
 package com.vosmann.flechette.server;
 
-import org.hyperic.sigar.Cpu;
+import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.Tcp;
 
 public class SystemMetrics {
 
-    Cpu cpu;
+    CpuPerc cpuPerc;
     Mem mem;
     Tcp tcp;
     int tcpEstablishedCount;
@@ -17,8 +17,8 @@ public class SystemMetrics {
     int tcpTimeWaitCount;
     int tcpBoundCount;
 
-    public Cpu getCpu() {
-        return cpu;
+    public CpuPerc getCpu() {
+        return cpuPerc;
     }
 
     public Mem getMem() {
@@ -58,7 +58,7 @@ public class SystemMetrics {
     }
 
     private SystemMetrics(Builder builder) {
-        cpu = builder.cpu;
+        cpuPerc = builder.cpuPerc;
         mem = builder.mem;
         tcp = builder.tcp;
         tcpEstablishedCount = builder.tcpEstablishedCount;
@@ -72,7 +72,7 @@ public class SystemMetrics {
 
     public static final class Builder {
 
-        private Cpu cpu;
+        private CpuPerc cpuPerc;
         private Mem mem;
         private Tcp tcp;
         private int tcpEstablishedCount;
@@ -83,8 +83,8 @@ public class SystemMetrics {
         private int tcpTimeWaitCount;
         private int tcpBoundCount;
 
-        public Builder cpu(Cpu val) {
-            cpu = val;
+        public Builder cpuPerc(CpuPerc val) {
+            cpuPerc = val;
             return this;
         }
 

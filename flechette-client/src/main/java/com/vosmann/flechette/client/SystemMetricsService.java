@@ -21,7 +21,7 @@ public class SystemMetricsService {
         try {
             final SystemMetrics.Builder metrics = new SystemMetrics.Builder();
 
-            metrics.cpu(sigar.getCpu());
+            metrics.cpuPerc(sigar.getCpuPerc());
             metrics.mem(sigar.getMem());
             metrics.tcp(sigar.getTcp());
             metrics.tcpEstablishedCount(getCount(NetFlags.TCP_ESTABLISHED));

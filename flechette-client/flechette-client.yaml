@@ -16,7 +16,7 @@ SenzaInfo:
         Description: ""
     - ImageVersion:
         Description: "Docker image version of flechette-client."
-        Default: "1.0-SNAPSHOT"
+        Default: "1.0-CLIENT-SNAPSHOT"
 
 SenzaComponents:
 
@@ -25,7 +25,7 @@ SenzaComponents:
 
   - AppServer:
       Type: Senza::TaupageAutoScalingGroup
-      InstanceType: t2.micro
+      InstanceType: m4.xlarge
       SecurityGroups:
         - app-flechette-client
       IamRoles:
@@ -39,7 +39,7 @@ SenzaComponents:
         source: "vosmann/flechette-client:{{Arguments.ImageVersion}}"
         health_check_path: /health
         ports:
-          11000: 11000
+          22000: 22000
         environment:
           URL: "{{Arguments.Url}}"
           THREAD_COUNT: "{{Arguments.ThreadCount}}"

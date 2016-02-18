@@ -39,12 +39,6 @@ public class Controller {
     }
 
 
-    @RequestMapping("/health")
-    @ResponseBody
-    String health() {
-        return "Running.";
-    }
-
     @RequestMapping("/metrics")
     @ResponseBody
     Map<String, Metric> metrics() {

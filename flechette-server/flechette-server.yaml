@@ -4,7 +4,7 @@ SenzaInfo:
   Parameters:
     - ImageVersion:
         Description: "Docker image version of flechette-server."
-        Default: 1.0-SNAPSHOT
+        Default: 1.0-SERVER-SNAPSHOT
 
 SenzaComponents:
 
@@ -13,7 +13,7 @@ SenzaComponents:
 
   - AppServer:
       Type: Senza::TaupageAutoScalingGroup
-      InstanceType: t2.micro
+      InstanceType: m4.large
       SecurityGroups:
         - app-flechette-server
       IamRoles:
@@ -28,6 +28,10 @@ SenzaComponents:
         health_check_path: /health
         ports:
           11000: 11000
+      AutoScaling:
+        Minimum: 3
+        Maximum: 3
+        MetricType: CPU
 
   - AppLoadBalancer:
       Type: Senza::WeightedDnsElasticLoadBalancer

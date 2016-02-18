@@ -2,9 +2,9 @@ FROM zalando/openjdk:8u45-b14-5
 
 WORKDIR /opt/flechette
 
-EXPOSE 11000
+EXPOSE 22000
 
-ENV VERSION 1.0-SNAPSHOT
+ENV VERSION 1.0-CLIENT-SNAPSHOT
 
 ADD lib lib
 ADD target/flechette-client-$VERSION.jar flechette-client.jar

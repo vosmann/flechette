@@ -22,12 +22,6 @@ public class Controller {
     @Autowired
     private SystemMetricsService systemMetricsService;
 
-    @RequestMapping("/health")
-    @ResponseBody
-    String health() {
-        return "Running.";
-    }
-
     @RequestMapping("/metrics")
     @ResponseBody
     Map<String, Metric> metrics() {
