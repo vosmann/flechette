@@ -93,8 +93,9 @@ public class App {
     @Bean
     public ClientHttpRequestFactory clientHttpRequestFactory() {
         final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setReadTimeout(REQUEST_TIMEOUT_IN_MS);
-        factory.setConnectTimeout(CONNECT_TIMEOUT_IN_MS);
+        factory.setReadTimeout(REQUEST_TIMEOUT_IN_MS); // Socket.
+        factory.setConnectionRequestTimeout(REQUEST_TIMEOUT_IN_MS); // Get from manager.
+        factory.setConnectTimeout(CONNECT_TIMEOUT_IN_MS); // Create connection.
         return factory;
     }
 
