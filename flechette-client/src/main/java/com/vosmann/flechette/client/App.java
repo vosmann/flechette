@@ -8,6 +8,8 @@ import com.vosmann.flechette.client.work.workers.Worker;
 import com.vosmann.flechette.client.work.workers.ning.NingSyncClientWorker;
 import com.vosmann.flechette.client.work.workers.RestTemplateWorker;
 import com.vosmann.flechette.client.work.workers.ning.pool.PoolConfig;
+import com.vosmann.flechette.client.work.workers.resttemplate.BigPoolRestTemplateWorker;
+import com.vosmann.flechette.client.work.workers.resttemplate.SmallTimeoutRestTemplateWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +19,6 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.util.List;
 import java.util.Set;
@@ -28,11 +29,6 @@ import java.util.stream.Collectors;
 public class App {
 
     private static final Logger LOG = LoggerFactory.getLogger(App.class);
-
-    // Wait until a connection is established.
-    // Not to be confused with waiting for a connection from a connection manager, what can be fast if reused connection.
-    public static final int CONNECT_TIMEOUT_IN_MS = 1000;
-    public static final int REQUEST_TIMEOUT_IN_MS = 100;
 
     @Value("${url}")
     private String url;
@@ -49,30 +45,35 @@ public class App {
     @Value("#{'${allowed.workers}'.split(',')}")
     private Set<String> allowedWorkers;
 
+    @Value("${timeout.connect}")
+    private int connectTimeout; // Wait for a conn to be established. Different than waiting for a conn from a conn manager.
+    @Value("${timeout.read}")
+    private int readTimeout;
+
     @Bean
     public Worker ningSyncClientOldtWorker(final MetricRegistry registry) {
         final PoolConfig poolConfig = PoolConfig.oldConfig();
-        return new NingSyncClientWorker(url, registry, poolConfig, "old");
+        return new NingSyncClientWorker(url, registry, poolConfig, "old", readTimeout);
     }
 
     @Bean
     public Worker ningSyncClientDefaultWorker(final MetricRegistry registry) {
         final PoolConfig poolConfig = PoolConfig.defaultConfig();
-        return new NingSyncClientWorker(url, registry, poolConfig, "default");
+        return new NingSyncClientWorker(url, registry, poolConfig, "default", readTimeout);
     }
 
-    @Bean
+
     public Worker ningSyncClientLongWorker(final MetricRegistry registry) {
         final int tenSeconds = 10000;
         final PoolConfig poolConfig = new PoolConfig.Builder().maxConnectionLifeTime(tenSeconds).build();
-        return new NingSyncClientWorker(url, registry, poolConfig, "long");
+        return new NingSyncClientWorker(url, registry, poolConfig, "long", readTimeout);
     }
 
     @Bean
     public Worker ningSyncClientIdleWorker(final MetricRegistry registry) {
         final int tenSeconds = 10000;
         final PoolConfig poolConfig = new PoolConfig.Builder().maxIdleTime(tenSeconds).build();
-        return new NingSyncClientWorker(url, registry, poolConfig, "idle");
+        return new NingSyncClientWorker(url, registry, poolConfig, "idle", readTimeout);
     }
 
     @Bean
@@ -82,21 +83,22 @@ public class App {
                 .maxConnectionLifeTime(tenSeconds)
                 .maxIdleTime(tenSeconds)
                 .build();
-        return new NingSyncClientWorker(url, registry, poolConfig, "longIdle");
+        return new NingSyncClientWorker(url, registry, poolConfig, "longIdle", readTimeout);
     }
 
     @Bean
-    public Worker restTemplateWorker(final MetricRegistry registry, final ClientHttpRequestFactory requestFactory) {
-        return new RestTemplateWorker(url, registry, "restTemplateDefault", requestFactory);
+    public Worker bigPoolRestTemplateWorker(final MetricRegistry registry) {
+        return new BigPoolRestTemplateWorker(url, registry, "bigPoolRestTemplate", connectTimeout, readTimeout);
     }
 
     @Bean
-    public ClientHttpRequestFactory clientHttpRequestFactory() {
-        final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setReadTimeout(REQUEST_TIMEOUT_IN_MS); // Socket.
-        factory.setConnectionRequestTimeout(REQUEST_TIMEOUT_IN_MS); // Get from manager.
-        factory.setConnectTimeout(CONNECT_TIMEOUT_IN_MS); // Create connection.
-        return factory;
+    public Worker smallTimeoutRestTemplateWorker(final MetricRegistry registry) {
+        return new SmallTimeoutRestTemplateWorker(url, registry, "smallTimeoutRestTemplate", readTimeout);
+    }
+
+    @Bean
+    public Worker restTemplateWorker(final MetricRegistry registry) {
+        return new RestTemplateWorker(url, registry, "restTemplateDefault", connectTimeout, readTimeout);
     }
 
     @Bean

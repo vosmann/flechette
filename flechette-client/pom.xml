@@ -68,6 +68,11 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.1</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>de.zalando.reco</groupId>-->
+            <!--<artifactId>oauth</artifactId>-->
+            <!--<version>0.3</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

@@ -19,13 +19,15 @@ public class NingSyncClientWorker implements Worker {
     private final String url;
     private final MetricRegistry registry;
     private final String name;
+    private final int timeout;
 
     public NingSyncClientWorker(final String url, final MetricRegistry registry, final PoolConfig poolConfig,
-                                final String name) {
-        this.client = new NingSyncClient(poolConfig, App.REQUEST_TIMEOUT_IN_MS);
+                                final String name, final int timeout) {
+        this.client = new NingSyncClient(poolConfig, timeout);
         this.url = url;
         this.registry = registry;
         this.name = name;
+        this.timeout = timeout;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class NingSyncClientWorker implements Worker {
 
     @Override
     public String toString() {
-        return "NingSyncClientWorker{" + "url='" + url + '\'' + ", name='" + name + '\'' + '}';
+        return "NingSyncClientWorker{" + "url='" + url + '\'' + ", name='" + name + '\'' + ", timeout=" + timeout + '}';
     }
 
 }

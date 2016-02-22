@@ -50,7 +50,7 @@ class WorkerAdder implements Runnable{
     @Override
     public String toString() {
         return "WorkerAdder{" + "worker=" + worker +
-                "executionPeriod=" + executionPeriod + ", timeUnit=" + timeUnit + '}';
+                ", executionPeriod=" + executionPeriod + ", timeUnit=" + timeUnit + '}';
     }
 
 }

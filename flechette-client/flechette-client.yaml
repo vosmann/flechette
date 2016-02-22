@@ -16,6 +16,13 @@ SenzaInfo:
         Description: "A thread will make a call every ExecutionPeriod timeunits."
     - ExecutionPeriodTimeUnit:
         Description: "E.g. MILLISECONDS"
+
+    - ConnectTimeout:
+        Description: "Timeout for establishing a connection in millis."
+        Default: 1000
+    - ReadTimeout:
+        Description: "Timeout for reading over a socket in millis."
+        Default: 100
     - ImageVersion:
         Description: "Docker image version of flechette-client."
         Default: "1.0-CLIENT-SNAPSHOT"
@@ -50,6 +57,8 @@ SenzaComponents:
           RAMPUP_TIMEUNIT: "{{Arguments.RampUpTimeUnit}}"
           EXECUTION_PERIOD: "{{Arguments.ExecutionPeriod}}"
           EXECUTION_PERIOD_TIMEUNIT: "{{Arguments.ExecutionPeriodTimeUnit}}"
+          TIMEOUT_CONNECT: "{{Arguments.ConnectTimeout}}"
+          TIMEOUT_READ: "{{Arguments.ReadTimeout}}"
       AutoScaling:
         Minimum: 1
         Maximum: 1
